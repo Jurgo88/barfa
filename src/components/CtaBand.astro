@@ -1,0 +1,14 @@
+---
+import { site } from '../data/site';
+interface Props { title?: string; button?: string }
+const { title = 'Máte projekt?<br>Poďme na to.', button = 'Poslať dopyt' } = Astro.props;
+---
+<section class="section section--accent">
+  <div class="wrap cta">
+    <h2 class="display display--l" set:html={title} />
+    <div class="cta__side">
+      <a class="btn btn--dark" href="/kontakt">{button}</a>
+      <a href={`mailto:${site.email}`} style="font-weight:600">{site.email}</a>
+    </div>
+  </div>
+</section>

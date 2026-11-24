@@ -1,0 +1,17 @@
+---
+import { site } from '../data/site';
+const links = [
+  { href: site.socials.instagram, label: 'Instagram' },
+  { href: site.socials.linkedin, label: 'LinkedIn' },
+  { href: site.socials.youtube, label: 'YouTube' },
+].filter((l) => l.href);
+---
+<footer class="site-footer">
+  <div class="wrap site-footer__inner">
+    <span>© {new Date().getFullYear()} {site.name} · simkovabarb<span class="dot">.</span></span>
+    <nav aria-label="Sociálne siete a kontakt">
+      {links.map((l) => <a href={l.href} rel="noopener" target="_blank">{l.label}</a>)}
+      <a href={`mailto:${site.email}`}>{site.email}</a>
+    </nav>
+  </div>
+</footer>

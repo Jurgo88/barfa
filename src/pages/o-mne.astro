@@ -1,0 +1,56 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import about from '../assets/foto/about.jpg';
+import { site } from '../data/site';
+---
+<Base title="O mne" description="Barbara Šimková – kreatívec s rockovou dušou a precíznosťou producenta. Grafický dizajn, fotografia, video a obsah na sociálne siete." image={about}>
+  <section class="wrap section" style="display:flex;flex-wrap:wrap;gap:56px;align-items:flex-start">
+    <div style="flex:1 1 360px;min-width:0">
+      <Image src={about} alt="Barbara Šimková na festivale" widths={[480, 800, 1200]} sizes="(max-width: 760px) 100vw, 40vw" loading="eager" style="width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:4px" />
+    </div>
+    <div style="flex:999 1 540px;min-width:0;display:flex;flex-direction:column;gap:24px">
+      <p class="eyebrow">O mne</p>
+      <h1 class="display display--l">Ahoj, som Barbara<span class="dot">.</span></h1>
+      <p style="font-size:clamp(19px,2vw,22px);line-height:1.5;color:#e6e2da">Som kreatívec s rockovou dušou a precíznosťou producenta. Venujem sa grafickému dizajnu, fotografii, videu a obsahu na sociálne siete, na pomedzí estetiky, stratégie a kultúry.</p>
+      <p style="color:var(--text-soft)">V jednej z popredných reklamných agentúr na Slovensku som sa podieľala na sociálnych sieťach Slovenskej sporiteľne a projektoch pre Popradskú. Aktuálne pôsobím v agentúre Image Pro, kde sa venujem správe klientskych účtov a tvorbe obsahu. Vyštudovala som dve umelecké školy, ktoré mi dali pevný základ vo vizuálnom myslení a práci s obrazom.</p>
+      <p style="color:var(--text-soft)">Zároveň manažujem kapelu The Youniverse, kde prepájam kreativitu s produkciou a vedením projektu. Keď treba zapnúť systém a dotiahnuť veci do finále, som presne tá, čo sa nezľakne.</p>
+      <div class="btn-row" style="margin-top:8px">
+        {site.cv && <a class="btn btn--light" href={site.cv} download>
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12" /><path d="m7 10 5 5 5-5" /><path d="M5 21h14" /></svg>
+          Stiahnuť CV (PDF)
+        </a>}
+        {site.socials.linkedin && <a class="btn btn--ghost" href={site.socials.linkedin} target="_blank" rel="noopener">LinkedIn</a>}
+      </div>
+    </div>
+  </section>
+
+  <section class="border-top">
+    <div class="wrap section split">
+      <h2 class="display display--s">Skúsenosti</h2>
+      <ol class="timeline">
+        <li><span class="timeline__when">[rok] – dnes</span><div class="timeline__what"><strong>Image Pro</strong><span class="muted">Správa klientskych účtov a tvorba obsahu.</span></div></li>
+        <li><span class="timeline__when">[rok] – dnes</span><div class="timeline__what"><strong>The Youniverse</strong><span class="muted">Manažment kapely, produkcia a vizuál: koncertné fotky, reels, plagáty.</span></div></li>
+        <li><span class="timeline__when">[rok] – [rok]</span><div class="timeline__what"><strong>Reklamná agentúra [názov]</strong><span class="muted">Sociálne siete pre Slovenskú sporiteľňu, projekty pre Popradskú.</span></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="border-top">
+    <div class="wrap section grid grid--3">
+      <div style="display:flex;flex-direction:column;gap:16px"><h2 class="eyebrow" style="color:var(--accent)">Čo robím</h2><p class="muted">Fotografia · Video a reels · Grafický dizajn · Obsah na sociálne siete · Art direction</p></div>
+      <div style="display:flex;flex-direction:column;gap:16px"><h2 class="eyebrow" style="color:var(--accent)">Nástroje</h2><p class="muted">Adobe balík [doplniť konkrétne programy]</p></div>
+      <div style="display:flex;flex-direction:column;gap:16px"><h2 class="eyebrow" style="color:var(--accent)">Jazyky</h2><p class="muted">Slovenčina · Angličtina [úroveň]</p></div>
+    </div>
+  </section>
+
+  <section class="section section--surface">
+    <div class="wrap cta" style="align-items:center">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <h2 style="font-size:32px;font-weight:600">Hľadáte niekoho do tímu?</h2>
+        <p class="muted">Agentúram rada pošlem portfólio na mieru a CV.</p>
+      </div>
+      <a class="btn btn--accent" href="/kontakt">Ozvite sa</a>
+    </div>
+  </section>
+</Base>
