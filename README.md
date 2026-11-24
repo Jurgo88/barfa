@@ -16,21 +16,29 @@ npm run preview  # náhľad hotového webu
 
 | Čo | Kde |
 | --- | --- |
-| E-mail, telefón, sociálne siete, CV, adresa formulára | `src/data/site.ts` |
-| Projekty (texty case studies, poradie, ktoré sú na úvode) | `src/data/projects.ts` |
+| E-mail, telefón, sociálne siete, CV | `src/data/site.ts` |
+| Projekty (texty case studies v SK aj EN, poradie, ktoré sú na úvode) | `src/data/projects.ts` |
+| Texty stránok v slovenčine a angličtine | `src/i18n/ui.ts` (služby a FAQ v `src/views/Services.astro`) |
 | Fotky projektov | `src/assets/foto/<projekt>/01.jpg, 02.jpg…` (prvá je titulná) |
 | Reels (YouTube ID) | `src/data/site.ts` → `reels` |
 | Farby a písmo | `src/styles/global.css` (premenné v `:root`) |
-| Stránky | `src/pages/` |
+| Rozloženie stránok (spoločné pre oba jazyky) | `src/views/` |
+| Adresy stránok | `src/pages/` (SK v koreni, EN v `src/pages/en/`) |
 
 Novú fotku stačí pridať do priečinka projektu, Astro ju pri builde zmenší a prevedie do WebP.
+
+## Jazyky, galéria a animácie
+
+- Slovenčina je na `/`, angličtina na `/en/`. Prepínač SK / EN v hlavičke vedie na tú istú stránku v druhom jazyku.
+- Fotky v galérii projektu sa po kliknutí otvoria zväčšené (šípky, Esc, swipe na mobile). Stačí odkaz s atribútom `data-lightbox`.
+- Animácie sú v `src/scripts/animations.ts` (GSAP + ScrollTrigger). Prvok sa pri scrollovaní objaví, ak má atribút `data-reveal`. Ak má návštevník v systéme zapnuté obmedzenie pohybu, animácie sa vypnú.
 
 Texty v `[hranatých zátvorkách]` a hodnoty `TODO` treba doplniť.
 
 ## Formulár
 
 Formulár na stránke Kontakt je pripravený pre **Netlify Forms** (funguje bez ďalšieho nastavenia po nasadení na Netlify).
-Pri inom hostingu nastavte `formAction` v `src/data/site.ts`, napríklad na adresu z Formspree.
+Po odoslaní presmeruje na `/dakujem` alebo `/en/thank-you`. Pri inom hostingu zmeňte `action` formulára v `src/views/Contact.astro`, napríklad na adresu z Formspree.
 
 ## Nasadenie
 

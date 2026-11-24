@@ -1,0 +1,14 @@
+---
+import View from '../../../views/Case.astro';
+import { getProjects } from '../../../data/projects';
+
+export function getStaticPaths() {
+  const projects = getProjects('en');
+  return projects.map((project, i) => ({
+    params: { slug: project.slug },
+    props: { project, next: projects[(i + 1) % projects.length] },
+  }));
+}
+const { project, next } = Astro.props;
+---
+<View lang="en" project={project} next={next} />

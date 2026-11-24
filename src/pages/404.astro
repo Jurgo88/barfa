@@ -1,11 +1,4 @@
 ---
-import Base from '../layouts/Base.astro';
+import View from '../views/Message.astro';
 ---
-<Base title="Stránka sa nenašla" description="Táto stránka neexistuje.">
-  <section class="wrap section" style="min-height:60vh;display:flex;flex-direction:column;gap:24px;justify-content:center">
-    <p class="eyebrow">Chyba 404</p>
-    <h1 class="display display--l">Tu nič nehrá<span class="dot">.</span></h1>
-    <p class="lead">Táto stránka neexistuje alebo sa presunula.</p>
-    <div class="btn-row"><a class="btn btn--light" href="/">Späť domov</a><a class="btn btn--ghost" href="/praca">Pozrieť práce</a></div>
-  </section>
-</Base>
+<View lang="sk" kind="notfound" />

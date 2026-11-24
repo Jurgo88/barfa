@@ -1,10 +1,4 @@
 ---
-import Base from '../layouts/Base.astro';
+import View from '../views/Message.astro';
 ---
-<Base title="Ďakujem" description="Dopyt bol odoslaný.">
-  <section class="wrap section" style="min-height:60vh;display:flex;flex-direction:column;gap:24px;justify-content:center">
-    <h1 class="display display--l">Ďakujem<span class="dot">.</span></h1>
-    <p class="lead">Správa je odoslaná. Ozvem sa čo najskôr.</p>
-    <div class="btn-row"><a class="btn btn--light" href="/praca">Pozrieť práce</a><a class="btn btn--ghost" href="/">Späť domov</a></div>
-  </section>
-</Base>
+<View lang="sk" kind="thanks" />

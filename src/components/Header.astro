@@ -1,16 +1,28 @@
 ---
-import { nav } from '../data/site';
+import { routes, alternatePath, langFromUrl, useT } from '../i18n/ui';
+const lang = langFromUrl(Astro.url);
+const t = useT(lang);
+const other = lang === 'sk' ? 'en' : 'sk';
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const items = [
+  { href: routes.work[lang], label: t('nav.work') },
+  { href: routes.services[lang], label: t('nav.services') },
+  { href: routes.about[lang], label: t('nav.about') },
+  { href: routes.contact[lang], label: t('nav.contact') },
+];
 ---
 <header class="site-header" data-open="false">
   <div class="wrap site-header__inner">
-    <a class="logo" href="/" aria-label="simkovabarb – domov">simkovabarb<span class="dot">.</span></a>
-    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="hlavne-menu">Menu</button>
-    <nav class="nav" id="hlavne-menu" aria-label="Hlavné menu">
-      {nav.map((item) => (
+    <a class="logo" href={routes.home[lang]} aria-label="simkovabarb">simkovabarb<span class="dot">.</span></a>
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="hlavne-menu" data-open-label={t('nav.close')} data-closed-label={t('nav.menu')}>{t('nav.menu')}</button>
+    <nav class="nav" id="hlavne-menu" aria-label={t('nav.label')}>
+      {items.map((item) => (
         <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>{item.label}</a>
       ))}
-      <a class="btn btn--accent" href="/kontakt">Napíšte mi</a>
+      <a class="lang-switch" href={alternatePath(Astro.url.pathname, other)} hreflang={other} lang={other} aria-label={t('lang.switchLabel')}>
+        <span aria-hidden="true">{lang === 'sk' ? <><b>SK</b> / EN</> : <>SK / <b>EN</b></>}</span>
+      </a>
+      <a class="btn btn--accent" href={routes.contact[lang]}>{t('nav.cta')}</a>
     </nav>
   </div>
 </header>
@@ -21,6 +33,6 @@ const path = Astro.url.pathname.replace(/\/$/, '') || '/';
     const open = header!.dataset.open !== 'true';
     header!.dataset.open = String(open);
     toggle.setAttribute('aria-expanded', String(open));
-    toggle.textContent = open ? 'Zavrieť' : 'Menu';
+    toggle.textContent = (open ? toggle.dataset.openLabel : toggle.dataset.closedLabel) ?? '';
   });
 </script>

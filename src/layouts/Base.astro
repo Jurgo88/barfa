@@ -3,16 +3,23 @@ import '../styles/global.css';
 import { getImage } from 'astro:assets';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Lightbox from '../components/Lightbox.astro';
 import { site } from '../data/site';
+import { useT, alternatePath, langs, type Lang } from '../i18n/ui';
 import heroImg from '../assets/foto/hero.jpg';
 
 interface Props {
+  lang?: Lang;
   title?: string;
   description?: string;
   image?: ImageMetadata;
 }
-const { title, description = site.description, image = heroImg } = Astro.props;
-const fullTitle = title ? `${title} – ${site.name}` : `${site.name} – fotografia, video a dizajn pre značky`;
+const { lang = 'sk', title, image = heroImg } = Astro.props;
+const t = useT(lang);
+const description = Astro.props.description ?? t('meta.description');
+const fullTitle = title ? `${title} – ${site.name}` : t('meta.title');
+const is404 = Astro.url.pathname.includes('404');
+const alternates = langs.map((l) => ({ lang: l, href: new URL(alternatePath(Astro.url.pathname, l), Astro.site).href }));
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const og = await getImage({ src: image, width: 1200, format: 'jpg' });
 const ogUrl = new URL(og.src, Astro.site);
@@ -21,24 +28,26 @@ const jsonLd = {
   '@type': 'Person',
   name: site.name,
   url: site.url,
-  jobTitle: 'Fotografka a grafická dizajnérka',
-  knowsAbout: ['Fotografia', 'Video', 'Grafický dizajn', 'Sociálne siete'],
+  jobTitle: lang === 'sk' ? 'Fotografka a grafická dizajnérka' : 'Photographer and graphic designer',
+  knowsAbout: lang === 'sk' ? ['Fotografia', 'Video', 'Grafický dizajn', 'Sociálne siete'] : ['Photography', 'Video', 'Graphic design', 'Social media'],
   sameAs: Object.values(site.socials).filter(Boolean),
 };
 ---
 <!doctype html>
-<html lang="sk">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    {!is404 && alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={a.href} />)}
+    {!is404 && <link rel="alternate" hreflang="x-default" href={alternates[0].href} />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta name="theme-color" content="#0D0D0C" />
     <meta property="og:type" content="website" />
-    <meta property="og:locale" content="sk_SK" />
+    <meta property="og:locale" content={t('meta.locale')} />
     <meta property="og:site_name" content={site.name} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
@@ -46,13 +55,26 @@ const jsonLd = {
     <meta property="og:image" content={ogUrl} />
     <meta name="twitter:card" content="summary_large_image" />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script is:inline>
+      // Skryť animovaný obsah len ak JS beží a pohyb nie je obmedzený; poistka po 2,5 s
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('anim');
+        setTimeout(function () {
+          if (!document.documentElement.classList.contains('anim-ready')) document.documentElement.classList.remove('anim');
+        }, 2500);
+      }
+    </script>
   </head>
   <body>
-    <a class="skip-link" href="#obsah">Preskočiť na obsah</a>
+    <a class="skip-link" href="#obsah">{t('nav.skip')}</a>
     <Header />
     <main id="obsah">
       <slot />
     </main>
     <Footer />
+    <Lightbox />
+    <script>
+      import '../scripts/animations';
+    </script>
   </body>
 </html>
