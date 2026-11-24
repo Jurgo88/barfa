@@ -1,0 +1,56 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../data/site';
+const types = ['Fotografia', 'Video & Reels', 'Grafický dizajn', 'Iné'];
+---
+<Base title="Kontakt" description="Napíšte Barbare Šimkovej o vašom projekte: fotografia, video a reels alebo grafický dizajn pre vašu značku.">
+  <section class="wrap section contact">
+    <div class="contact__info">
+      <h1 class="display display--l">Poďme<br />na to<span class="dot">.</span></h1>
+      <p class="lead">Napíšte mi pár viet o projekte. Ozvem sa čo najskôr s otázkami alebo ponukou.</p>
+      <div class="contact__list">
+        <div><p class="eyebrow">E-mail</p><a href={`mailto:${site.email}`}>{site.email}</a></div>
+        {site.phone && <div><p class="eyebrow">Telefón</p><a href={`tel:${site.phone.replace(/\s/g, '')}`}>{site.phone}</a></div>}
+        <div><p class="eyebrow">Sociálne siete</p>
+          <div style="display:flex;flex-wrap:wrap;gap:20px;font-size:18px;font-weight:600">
+            {site.socials.instagram && <a href={site.socials.instagram} target="_blank" rel="noopener">Instagram</a>}
+            {site.socials.linkedin && <a href={site.socials.linkedin} target="_blank" rel="noopener">LinkedIn</a>}
+            {site.socials.youtube && <a href={site.socials.youtube} target="_blank" rel="noopener">YouTube</a>}
+          </div>
+        </div>
+        <div><p class="eyebrow">Pôsobím</p><span style="font-size:18px">{site.location}, po dohode kdekoľvek</span></div>
+      </div>
+    </div>
+
+    <form class="form" name="dopyt" method="POST" action={site.formAction} data-netlify="true" netlify-honeypot="web">
+      <input type="hidden" name="form-name" value="dopyt" />
+      <p class="hp"><label>Nevypĺňajte: <input name="web" tabindex="-1" autocomplete="off" /></label></p>
+      <h2 style="font-size:28px;font-weight:600">Dopyt na spoluprácu</h2>
+      <div class="form__row">
+        <label class="field">Meno<input type="text" name="meno" autocomplete="name" required /></label>
+        <label class="field">Firma / značka<input type="text" name="firma" autocomplete="organization" /></label>
+      </div>
+      <label class="field">E-mail<input type="email" name="email" autocomplete="email" required /></label>
+      <fieldset>
+        <legend>Čo potrebujete?</legend>
+        <div class="chips">
+          {types.map((t) => <label class="chip"><input type="checkbox" name="sluzba" value={t} /> {t}</label>)}
+        </div>
+      </fieldset>
+      <div class="form__row">
+        <label class="field">Rozpočet
+          <select name="rozpocet">
+            <option>Zatiaľ neviem</option>
+            <option>do 500 €</option>
+            <option>500 – 1 500 €</option>
+            <option>viac ako 1 500 €</option>
+          </select>
+        </label>
+        <label class="field">Termín<input type="text" name="termin" placeholder="napr. marec 2027" /></label>
+      </div>
+      <label class="field">O projekte<textarea name="sprava" rows="5" required placeholder="Čo plánujete, pre koho a kde sa to bude používať?"></textarea></label>
+      <button class="btn btn--accent" type="submit" style="align-self:flex-start;min-height:56px;font-size:18px;padding:16px 32px">Odoslať dopyt</button>
+      <p class="form-note">Údaje použijem len na odpoveď na váš dopyt.</p>
+    </form>
+  </section>
+</Base>
