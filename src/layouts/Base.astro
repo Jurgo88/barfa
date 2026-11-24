@@ -4,6 +4,7 @@ import { getImage } from 'astro:assets';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Lightbox from '../components/Lightbox.astro';
+import IntroGate from '../components/IntroGate.astro';
 import { site } from '../data/site';
 import { useT, alternatePath, langs, type Lang } from '../i18n/ui';
 import heroImg from '../assets/foto/hero.jpg';
@@ -13,8 +14,9 @@ interface Props {
   title?: string;
   description?: string;
   image?: ImageMetadata;
+  intro?: boolean;
 }
-const { lang = 'sk', title, image = heroImg } = Astro.props;
+const { lang = 'sk', title, image = heroImg, intro = false } = Astro.props;
 const t = useT(lang);
 const description = Astro.props.description ?? t('meta.description');
 const fullTitle = title ? `${title} – ${site.name}` : t('meta.title');
@@ -64,6 +66,7 @@ const jsonLd = {
         }, 2500);
       }
     </script>
+    {intro && <IntroGate />}
   </head>
   <body>
     <a class="skip-link" href="#obsah">{t('nav.skip')}</a>

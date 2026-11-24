@@ -1,0 +1,172 @@
+---
+// Úvodná animácia na domovskej stránke. Hrá sa raz za návštevu (sessionStorage).
+// Na náhľad sa dá vybrať cez ?intro=reflektor | soundcheck | blesk (alebo ?intro=ziadne).
+import { getImage } from 'astro:assets';
+import { getProjects } from '../data/projects';
+import { useT, type Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+const picks = getProjects(lang).flatMap((p) => p.gallery.slice(0, 1).concat(p.gallery.slice(3, 4))).slice(0, 7);
+const flashes = await Promise.all(picks.map(async (src) => (await getImage({ src, width: 640, format: 'webp' })).src));
+const bars = Array.from({ length: 28 });
+const cols = Array.from({ length: 5 });
+---
+
+<div class="intro" aria-hidden="true">
+  <!-- 1 · Reflektor: svetlo prejde po tme a odkryje meno -->
+  <div class="intro__v intro--reflektor" data-v="reflektor">
+    <div class="intro__spot"></div>
+    <p class="intro__name">simkovabarb<span>.</span></p>
+    <p class="intro__small">Visuals with character</p>
+  </div>
+
+  <!-- 2 · Soundcheck: ekvalizér a počítadlo, potom sa stĺpce vytiahnu hore -->
+  <div class="intro__v intro--soundcheck" data-v="soundcheck">
+    <div class="intro__cols">{cols.map(() => <span />)}</div>
+    <div class="intro__sc">
+      <p class="intro__small">Soundcheck · simkovabarb.</p>
+      <div class="intro__eq">{bars.map(() => <span />)}</div>
+      <p class="intro__count"><span>000</span><i>%</i></p>
+    </div>
+  </div>
+
+  <!-- 3 · Blesk: rýchla séria fotiek ako pri fotení, každú odpáli blesk -->
+  <div class="intro__v intro--blesk" data-v="blesk">
+    <div class="intro__frame">
+      {flashes.map((src) => <img src={src} alt="" decoding="async" />)}
+    </div>
+    <p class="intro__small intro__shots"><span>01</span> / {String(flashes.length).padStart(2, '0')}</p>
+    <p class="intro__name intro__name--final">Visuals with character<span>.</span></p>
+    <div class="intro__flash"></div>
+  </div>
+
+  <button class="intro__skip" type="button" tabindex="-1">{t('intro.skip')}</button>
+</div>
+
+<style is:global>
+  .intro { display: none; }
+  html.intro-on { overflow: hidden; }
+  html.intro-on .intro { display: block; position: fixed; inset: 0; z-index: 300; color: var(--text); overflow: hidden; }
+  html.intro-on .site-header { visibility: hidden; }
+  .intro__v { display: none; position: absolute; inset: 0; }
+  html[data-intro='reflektor'] .intro--reflektor,
+  html[data-intro='soundcheck'] .intro--soundcheck,
+  html[data-intro='blesk'] .intro--blesk { display: block; }
+  .intro__small { font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+  .intro__name { font-family: var(--display); text-transform: uppercase; line-height: 0.9; font-size: clamp(56px, 13vw, 220px); letter-spacing: -0.01em; white-space: nowrap; }
+  .intro__name span { color: var(--accent); }
+  .intro__skip { position: absolute; right: 20px; bottom: 20px; z-index: 5; background: none; border: 0; color: var(--muted); font: inherit; font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; cursor: pointer; padding: 10px; }
+  .intro__skip:hover { color: var(--accent); }
+
+  /* Reflektor */
+  .intro--reflektor { background: var(--bg); display: none; place-items: center; }
+  html[data-intro='reflektor'] .intro--reflektor { display: grid; }
+  .intro--reflektor .intro__name {
+    --x: -20%; --y: 50%; --r: 0%;
+    color: transparent;
+    background: radial-gradient(circle at var(--x) var(--y), #fff 0, var(--text) var(--r), #1e1e1b calc(var(--r) + 14%));
+    -webkit-background-clip: text; background-clip: text;
+    grid-area: 1 / 1;
+  }
+  .intro--reflektor .intro__small { grid-area: 1 / 1; align-self: end; margin-bottom: 18vh; opacity: 0; }
+  .intro__spot { position: absolute; width: 70vmax; height: 70vmax; left: 0; top: 50%; translate: -50% -50%; border-radius: 50%;
+    background: radial-gradient(circle, rgb(255 90 31 / 0.28), rgb(255 90 31 / 0.08) 35%, transparent 65%); pointer-events: none; }
+
+  /* Soundcheck */
+  .intro__cols { position: absolute; inset: 0; display: flex; }
+  .intro__cols span { flex: 1; background: var(--bg); margin-right: -1px; }
+  .intro__sc { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding: clamp(20px, 4vw, 48px); }
+  .intro__eq { display: flex; align-items: center; justify-content: center; gap: clamp(3px, 0.6vw, 8px); height: 34vh; }
+  .intro__eq span { width: clamp(4px, 1vw, 12px); height: 100%; background: var(--text); transform-origin: 50% 50%; transform: scaleY(0.04); border-radius: 2px; }
+  .intro__eq span:nth-child(7n + 3) { background: var(--accent); }
+  .intro__count { font-family: var(--display); font-size: clamp(88px, 18vw, 280px); line-height: 0.8; display: flex; align-items: flex-start; }
+  .intro__count i { font-style: normal; font-size: 0.3em; color: var(--accent); margin-left: 0.1em; }
+
+  /* Blesk */
+  .intro--blesk { background: var(--bg); }
+  .intro__frame { position: absolute; left: 50%; top: 50%; translate: -50% -50%; width: min(56vw, 46vh); aspect-ratio: 4 / 5; overflow: hidden; border-radius: 4px; }
+  .intro__frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
+  .intro__shots { position: absolute; left: 50%; bottom: 8vh; translate: -50% 0; font-variant-numeric: tabular-nums; }
+  .intro__shots span { color: var(--text); }
+  .intro__name--final { position: absolute; left: 50%; top: 50%; translate: -50% -50%; font-size: clamp(40px, 9vw, 150px); white-space: normal; text-align: center; width: 92vw; opacity: 0; }
+  .intro__flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  const d = document.documentElement;
+  const root = document.querySelector<HTMLElement>('.intro');
+  const v = d.dataset.intro;
+
+  function done() {
+    d.classList.remove('intro-on');
+    delete d.dataset.intro;
+    try { sessionStorage.setItem('introSeen', '1'); } catch (e) {}
+    document.dispatchEvent(new Event('intro:done'));
+  }
+
+  if (root && d.classList.contains('intro-on') && v) {
+    const box = root.querySelector<HTMLElement>(`[data-v="${v}"]`)!;
+    const tl = gsap.timeline({ onComplete: done });
+
+    if (v === 'reflektor') {
+      const name = box.querySelector<HTMLElement>('.intro__name')!;
+      const spot = box.querySelector<HTMLElement>('.intro__spot')!;
+      tl.set(name, { '--x': '-20%', '--y': '40%', '--r': '0%' })
+        .to(name, { '--x': '75%', '--y': '60%', '--r': '10%', duration: 1.3, ease: 'power2.inOut' }, 0)
+        .fromTo(spot, { left: '-10%', top: '40%' }, { left: '75%', top: '60%', duration: 1.3, ease: 'power2.inOut' }, 0)
+        .to(name, { '--x': '50%', '--y': '50%', duration: 0.45, ease: 'power2.out' })
+        .to(spot, { left: '50%', top: '50%', duration: 0.45, ease: 'power2.out' }, '<')
+        .to(name, { '--r': '120%', duration: 0.6, ease: 'power2.in' })
+        .to(spot, { scale: 2.4, autoAlpha: 0, duration: 0.6, ease: 'power2.in' }, '<')
+        .to(box.querySelector('.intro__small'), { opacity: 1, duration: 0.4 }, '<0.2')
+        .to(box, { clipPath: 'inset(0% 0% 100% 0%)', duration: 0.9, ease: 'expo.inOut' }, '+=0.25');
+    }
+
+    if (v === 'soundcheck') {
+      const bars = gsap.utils.toArray<HTMLElement>(box.querySelectorAll('.intro__eq span'));
+      const num = box.querySelector<HTMLElement>('.intro__count span')!;
+      const sc = box.querySelector<HTMLElement>('.intro__sc')!;
+      const cols = box.querySelectorAll('.intro__cols span');
+      const counter = { n: 0 };
+      // Ekvalizér skáče, kým beží počítadlo
+      const eq = gsap.to(bars, {
+        scaleY: () => gsap.utils.random(0.12, 1),
+        duration: 0.16, ease: 'power1.inOut', repeat: -1, repeatRefresh: true, yoyo: true,
+        stagger: { each: 0.02, from: 'center' },
+      });
+      tl.to(counter, { n: 100, duration: 2, ease: 'power2.inOut', onUpdate: () => { num.textContent = String(Math.round(counter.n)).padStart(3, '0'); } })
+        .add(() => eq.kill())
+        .to(bars, { scaleY: 0.04, duration: 0.25, ease: 'power2.in', stagger: { each: 0.01, from: 'edges' } })
+        .to(sc, { autoAlpha: 0, y: -30, duration: 0.35, ease: 'power2.in' }, '-=0.1')
+        .to(cols, { yPercent: -100, duration: 0.8, ease: 'expo.inOut', stagger: 0.07 }, '-=0.05');
+    }
+
+    if (v === 'blesk') {
+      const imgs = gsap.utils.toArray<HTMLElement>(box.querySelectorAll('.intro__frame img'));
+      const flash = box.querySelector<HTMLElement>('.intro__flash')!;
+      const shots = box.querySelector<HTMLElement>('.intro__shots span')!;
+      const frame = box.querySelector<HTMLElement>('.intro__frame')!;
+      const final = box.querySelector<HTMLElement>('.intro__name--final')!;
+      tl.from(frame, { scale: 0.85, autoAlpha: 0, duration: 0.4, ease: 'power3.out' });
+      imgs.forEach((img, i) => {
+        const at = 0.35 + i * 0.26;
+        tl.set(flash, { opacity: 0.9 }, at)
+          .set(imgs, { opacity: 0 }, at)
+          .set(img, { opacity: 1, scale: 1.12 }, at)
+          .add(() => { shots.textContent = String(i + 1).padStart(2, '0'); }, at)
+          .to(flash, { opacity: 0, duration: 0.22, ease: 'power2.out' }, at)
+          .to(img, { scale: 1, duration: 0.26, ease: 'power2.out' }, at);
+      });
+      tl.set(flash, { opacity: 1 }, '+=0.15')
+        .set([frame, box.querySelector('.intro__shots')], { autoAlpha: 0 })
+        .set(final, { opacity: 1 })
+        .to(flash, { opacity: 0, duration: 0.5, ease: 'power2.out' })
+        .fromTo(final, { scale: 1.08 }, { scale: 1, duration: 0.8, ease: 'power3.out' }, '<')
+        .to(box, { autoAlpha: 0, duration: 0.6, ease: 'power2.inOut' }, '+=0.3');
+    }
+
+    root.querySelector('.intro__skip')?.addEventListener('click', () => tl.progress(1));
+  }
+</script>

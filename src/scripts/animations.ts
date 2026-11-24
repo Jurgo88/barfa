@@ -12,7 +12,10 @@ mm.add('(prefers-reduced-motion: no-preference)', () => {
   const heroBits = gsap.utils.toArray<HTMLElement>('.hero [data-hero]');
   const heroMedia = document.querySelector<HTMLElement>('.hero__media');
   if (lines.length) {
-    const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+    // Ak beží úvodná animácia, hero počká na jej koniec
+    const waiting = root.classList.contains('intro-on');
+    const tl = gsap.timeline({ defaults: { ease: 'power4.out' }, paused: waiting });
+    if (waiting) document.addEventListener('intro:done', () => tl.play(), { once: true });
     tl.fromTo(lines, { yPercent: 110, autoAlpha: 1 }, { yPercent: 0, duration: 1.1, stagger: 0.12 })
       .fromTo(heroBits, { y: 24, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.8, stagger: 0.1 }, '-=0.7');
     if (heroMedia) {
