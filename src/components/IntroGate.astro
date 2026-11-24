@@ -1,0 +1,19 @@
+---
+// Rozhodne ešte v <head>, či sa úvodná animácia prehrá (aby stránka nepreblikla)
+const DEFAULT = 'soundcheck';
+---
+<script is:inline define:vars={{ DEFAULT }}>
+  (function () {
+    var d = document.documentElement;
+    var q = new URLSearchParams(location.search).get('intro');
+    var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var seen = false;
+    try { seen = sessionStorage.getItem('introSeen') === '1'; } catch (e) {}
+    var v = q || (seen ? null : DEFAULT);
+    if (still || !v || v === 'ziadne' || !/^(reflektor|soundcheck|blesk)$/.test(v)) return;
+    d.classList.add('intro-on');
+    d.dataset.intro = v;
+    // Poistka: ak by sa skript nenačítal, úvod po 7 s zmizne
+    setTimeout(function () { if (d.classList.contains('intro-on')) { d.classList.remove('intro-on'); document.dispatchEvent(new Event('intro:done')); } }, 7000);
+  })();
+</script>

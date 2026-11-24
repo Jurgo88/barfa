@@ -94,7 +94,7 @@ export const ui = {
     'form.submit': 'Odoslať dopyt', 'form.note': 'Údaje použijem len na odpoveď na váš dopyt.', 'form.hp': 'Nevypĺňajte:',
     'thanks.title': 'Ďakujem', 'thanks.lead': 'Správa je odoslaná. Ozvem sa čo najskôr.', 'thanks.home': 'Späť domov',
     'notfound.title': 'Stránka sa nenašla', 'notfound.h1': 'Tu nič nehrá', 'notfound.lead': 'Táto stránka neexistuje alebo sa presunula.',
-    'lightbox.label': 'Zväčšená fotka', 'lightbox.close': 'Zavrieť', 'lightbox.prev': 'Predchádzajúca fotka', 'lightbox.next': 'Ďalšia fotka',
+    'intro.skip': 'Preskočiť', 'lightbox.label': 'Zväčšená fotka', 'lightbox.close': 'Zavrieť', 'lightbox.prev': 'Predchádzajúca fotka', 'lightbox.next': 'Ďalšia fotka',
   },
   en: {
     'meta.title': 'Barbara Šimková – photography, video and design for brands',
@@ -162,7 +162,7 @@ export const ui = {
     'form.submit': 'Send enquiry', 'form.note': 'I’ll only use your details to reply to your enquiry.', 'form.hp': 'Leave empty:',
     'thanks.title': 'Thank you', 'thanks.lead': 'Your message has been sent. I’ll get back to you soon.', 'thanks.home': 'Back home',
     'notfound.title': 'Page not found', 'notfound.h1': 'Nothing playing here', 'notfound.lead': 'This page doesn’t exist or has moved.',
-    'lightbox.label': 'Enlarged photo', 'lightbox.close': 'Close', 'lightbox.prev': 'Previous photo', 'lightbox.next': 'Next photo',
+    'intro.skip': 'Skip', 'lightbox.label': 'Enlarged photo', 'lightbox.close': 'Close', 'lightbox.prev': 'Previous photo', 'lightbox.next': 'Next photo',
   },
 } as const;
 
