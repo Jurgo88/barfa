@@ -1,0 +1,55 @@
+---
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { getProjects, categories } from '../data/projects';
+import { useT, type Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+const projects = getProjects(lang);
+---
+<Base lang={lang} title={t('work.title')} description={t('work.description')}>
+  <section class="wrap section" style="padding-bottom:40px;display:flex;flex-direction:column;gap:24px">
+    <h1 class="display display--l">{t('work.title')}</h1>
+    <p class="lead" data-reveal>{t('work.lead')}</p>
+    <div class="filters" role="group" aria-label={t('work.filter')} data-reveal>
+      {categories.map((c, i) => (
+        <button class="filter" type="button" data-filter={c} aria-pressed={i === 0 ? 'true' : 'false'}>{t(`cat.${c}`)}</button>
+      ))}
+    </div>
+  </section>
+  <section class="wrap section section--tight-top">
+    <div class="grid grid--3" id="projekty" style="row-gap:48px">
+      {projects.map((p) => <ProjectCard project={p} ratio="4 / 5" more={false} headingLevel="h2" />)}
+    </div>
+    <p id="ziadne" class="muted" hidden>{t('work.empty')}</p>
+  </section>
+  <CtaBand title={t('work.cta')} />
+</Base>
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  const buttons = document.querySelectorAll<HTMLButtonElement>('.filter');
+  const cards = document.querySelectorAll<HTMLElement>('#projekty .card');
+  const empty = document.getElementById('ziadne');
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  buttons.forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const f = btn.dataset.filter!;
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      const shown: HTMLElement[] = [];
+      cards.forEach((card) => {
+        const show = f === 'all' || card.dataset.categories!.split(' ').includes(f);
+        card.hidden = !show;
+        if (show) shown.push(card);
+      });
+      if (empty) empty.hidden = shown.length > 0;
+      if (!still && shown.length) {
+        gsap.fromTo(shown, { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.06, ease: 'power3.out', overwrite: true });
+      }
+      // Karty sa presunuli, animácie pri scrollovaní musia prepočítať pozície
+      ScrollTrigger.refresh();
+    }),
+  );
+</script>

@@ -1,0 +1,19 @@
+---
+// Jednoduchá stránka so správou: poďakovanie po odoslaní formulára a chyba 404
+import Base from '../layouts/Base.astro';
+import { routes, useT, type Lang } from '../i18n/ui';
+interface Props { lang: Lang; kind: 'thanks' | 'notfound' }
+const { lang, kind } = Astro.props;
+const t = useT(lang);
+const title = kind === 'thanks' ? t('thanks.title') : t('notfound.title');
+const h1 = kind === 'thanks' ? t('thanks.title') : t('notfound.h1');
+const lead = kind === 'thanks' ? t('thanks.lead') : t('notfound.lead');
+---
+<Base lang={lang} title={title} description={lead}>
+  <section class="wrap section" style="min-height:60vh;display:flex;flex-direction:column;gap:24px;justify-content:center">
+    {kind === 'notfound' && <p class="eyebrow">404</p>}
+    <h1 class="display display--l">{h1}<span class="dot">.</span></h1>
+    <p class="lead">{lead}</p>
+    <div class="btn-row"><a class="btn btn--light" href={routes.work[lang]}>{t('home.ctaWork')}</a><a class="btn btn--ghost" href={routes.home[lang]}>{t('thanks.home')}</a></div>
+  </section>
+</Base>

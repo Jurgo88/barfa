@@ -1,0 +1,93 @@
+---
+// Zväčšené prezeranie fotiek. Každý odkaz s atribútom data-lightbox sa otvorí v tomto okne.
+import { langFromUrl, useT } from '../i18n/ui';
+const t = useT(langFromUrl(Astro.url));
+---
+<dialog class="lightbox" aria-label={t('lightbox.label')}>
+  <div class="lightbox__stage">
+    <img class="lightbox__img" alt="" />
+  </div>
+  <p class="lightbox__count" aria-live="polite"></p>
+  <button class="lightbox__btn lightbox__close" type="button" aria-label={t('lightbox.close')}>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+  </button>
+  <button class="lightbox__btn lightbox__prev" type="button" aria-label={t('lightbox.prev')}>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg>
+  </button>
+  <button class="lightbox__btn lightbox__next" type="button" aria-label={t('lightbox.next')}>
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+  </button>
+</dialog>
+
+<script>
+  import { gsap } from 'gsap';
+
+  const dialog = document.querySelector<HTMLDialogElement>('.lightbox');
+  const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('a[data-lightbox]'));
+
+  if (dialog && links.length) {
+    const img = dialog.querySelector<HTMLImageElement>('.lightbox__img')!;
+    const count = dialog.querySelector<HTMLElement>('.lightbox__count')!;
+    const prev = dialog.querySelector<HTMLButtonElement>('.lightbox__prev')!;
+    const next = dialog.querySelector<HTMLButtonElement>('.lightbox__next')!;
+    const close = dialog.querySelector<HTMLButtonElement>('.lightbox__close')!;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let index = 0;
+    let opener: HTMLElement | null = null;
+
+    if (links.length < 2) { prev.hidden = true; next.hidden = true; }
+
+    const show = (i: number, dir = 0) => {
+      index = (i + links.length) % links.length;
+      const link = links[index];
+      const thumb = link.querySelector('img');
+      img.src = link.href;
+      img.alt = thumb?.alt ?? '';
+      count.textContent = `${index + 1} / ${links.length}`;
+      // prednačítanie susedných fotiek
+      [index + 1, index - 1].forEach((j) => { new Image().src = links[(j + links.length) % links.length].href; });
+      if (!reduce.matches) {
+        gsap.fromTo(img, { opacity: 0, x: dir * 40 }, { opacity: 1, x: 0, duration: 0.35, ease: 'power2.out' });
+      }
+    };
+
+    const open = (i: number, from: HTMLElement) => {
+      opener = from;
+      dialog.showModal();
+      document.documentElement.style.overflow = 'hidden';
+      show(i);
+      if (!reduce.matches) gsap.fromTo(dialog, { opacity: 0 }, { opacity: 1, duration: 0.25 });
+    };
+
+    links.forEach((link, i) =>
+      link.addEventListener('click', (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+        e.preventDefault();
+        open(i, link);
+      }),
+    );
+
+    prev.addEventListener('click', () => show(index - 1, -1));
+    next.addEventListener('click', () => show(index + 1, 1));
+    close.addEventListener('click', () => dialog.close());
+    dialog.addEventListener('close', () => {
+      document.documentElement.style.overflow = '';
+      opener?.focus();
+    });
+    // klik mimo fotky zatvorí okno
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog || (e.target as HTMLElement).classList.contains('lightbox__stage')) dialog.close();
+    });
+    dialog.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') show(index + 1, 1);
+      if (e.key === 'ArrowLeft') show(index - 1, -1);
+    });
+    // swipe na mobile
+    let startX = 0;
+    dialog.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
+    dialog.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 50) show(index + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+    });
+  }
+</script>

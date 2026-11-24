@@ -1,0 +1,95 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { getProjects } from '../data/projects';
+import { routes, projectPath, useT, type Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+const projects = getProjects(lang);
+const by = (slug: string) => projects.find((p) => p.slug === slug)!;
+const L = {
+  sk: {
+    services: [
+      { name: 'Fotografia', alt: 'Produktová fotka Popradská Ginko', text: 'Fotky, ktoré majú náladu a dajú sa hneď použiť na web, e-shop aj sociálne siete.', items: ['Produktové fotky', 'Kampane a lookbooky', 'Eventy a koncerty', 'Portréty tímu'] },
+      { name: 'Video & Reels', alt: 'Kamera na natáčaní reklamy', text: 'Krátke vertikálne videá, ktoré zastavia scrollovanie. Natočené a zostrihané pre Instagram a TikTok.', items: ['Reels a TikToky', 'Zákulisie natáčaní (BTS)', 'Videá z eventov', 'Krátke produktové videá'] },
+      { name: 'Grafický dizajn', alt: 'Grafika Explózia chuti pre Popradskú', text: 'Vizuály, ktoré k fotkám ladia. Od jedného príspevku po celú kampaň.', items: ['Grafika na sociálne siete', 'Vizuály kampaní', 'Plagáty a pozvánky', 'Merch a obaly'] },
+    ],
+    faq: [
+      { q: 'Ako rýchlo dodáte hotové fotky?', a: '[Napr. do 7 pracovných dní od focenia.]' },
+      { q: 'Cestujete aj mimo svojho mesta?', a: '[Odpoveď]' },
+      { q: 'Kto vlastní práva k fotkám?', a: '[Odpoveď k licencii]' },
+      { q: 'Fakturujete na firmu?', a: '[Odpoveď]' },
+    ],
+  },
+  en: {
+    services: [
+      { name: 'Photography', alt: 'Product photo of Popradská Ginko', text: 'Photos with a mood that are ready to use on your website, e-shop and social media.', items: ['Product photography', 'Campaigns and lookbooks', 'Events and concerts', 'Team portraits'] },
+      { name: 'Video & Reels', alt: 'Camera on an ad shoot', text: 'Short vertical videos that stop the scroll. Shot and edited for Instagram and TikTok.', items: ['Reels and TikToks', 'Behind the scenes (BTS)', 'Event videos', 'Short product videos'] },
+      { name: 'Graphic design', alt: 'Explózia chuti graphic for Popradská', text: 'Visuals that match the photos. From a single post to a full campaign.', items: ['Social media graphics', 'Campaign visuals', 'Posters and invitations', 'Merch and packaging'] },
+    ],
+    faq: [
+      { q: 'How quickly do you deliver the final photos?', a: '[E.g. within 7 working days of the shoot.]' },
+      { q: 'Do you travel outside your city?', a: '[Answer]' },
+      { q: 'Who owns the rights to the photos?', a: '[Licensing answer]' },
+      { q: 'Do you invoice companies?', a: '[Answer]' },
+    ],
+  },
+}[lang];
+const media = [
+  { img: by('popradska-produktove-foto').gallery[1], link: routes.work[lang] },
+  { img: by('zakulisie-natacania-reklamy').gallery[7], link: `${routes.home[lang]}#reels` },
+  { img: by('popradska-grafika').gallery[1], link: projectPath(lang, 'popradska-grafika') },
+];
+const services = L.services.map((s, i) => ({ ...s, ...media[i], num: `0${i + 1}` }));
+---
+<Base lang={lang} title={t('services.title')} description={t('services.description')}>
+  <section class="wrap section" style="padding-bottom:56px;display:flex;flex-direction:column;gap:24px">
+    <h1 class="display display--l">{t('services.title')}</h1>
+    <p class="lead" data-reveal>{t('services.lead')}</p>
+  </section>
+
+  <section class="wrap">
+    {services.map((s) => (
+      <article class="service">
+        <div class="service__img"><Image src={s.img} alt={s.alt} widths={[480, 800, 1200]} sizes="(max-width: 760px) 100vw, 40vw" /></div>
+        <div class="service__body" data-reveal>
+          <span class="service-col__num" style="color:var(--accent);font-size:22px">{s.num}</span>
+          <h2 class="display display--m">{s.name}</h2>
+          <p class="lead">{s.text}</p>
+          <ul class="service__list">{s.items.map((it) => <li>{it}</li>)}</ul>
+          <div style="display:flex;flex-wrap:wrap;gap:20px;align-items:center">
+            <span class="muted">{t('services.priceFrom')} <strong style="color:var(--text)">[CENA] €</strong></span>
+            <a class="link-underline" href={s.link}>{t('services.examples')}</a>
+          </div>
+        </div>
+      </article>
+    ))}
+  </section>
+
+  <section class="section section--light" style="margin-top:40px">
+    <div class="wrap">
+      <h2 class="display display--m" style="margin-bottom:12px" data-reveal>{t('services.packages')}</h2>
+      <p style="color:var(--light-muted);font-size:19px;max-width:620px;margin-bottom:40px" data-reveal>{t('services.packagesLead')}</p>
+      <div class="packages">
+        <div class="package" data-reveal><h3>{t('pkg.start')}</h3><span class="package__price">[CENA] €</span><ul><li>{t('pkg.photos')}</li><li>{t('pkg.reels')}</li><li>{t('pkg.day')}</li></ul></div>
+        <div class="package package--dark" data-reveal><div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><h3>{t('pkg.monthly')}</h3><span class="badge">{t('pkg.popular')}</span></div><span class="package__price">[CENA] € {t('pkg.perMonth')}</span><ul><li>{t('pkg.photosM')}</li><li>{t('pkg.reelsM')}</li><li>{t('pkg.graphics')}</li></ul></div>
+        <div class="package" data-reveal><h3>{t('pkg.custom')}</h3><span class="package__price">{t('pkg.onRequest')}</span><ul><li>{t('pkg.concept')}</li><li>{t('pkg.all')}</li><li>{t('pkg.assets')}</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section split">
+    <h2 class="display display--s" data-reveal>{t('services.faq')}</h2>
+    <div class="faq" data-reveal>
+      {L.faq.map((f, i) => <details open={i === 0}><summary>{f.q}</summary><p>{f.a}</p></details>)}
+    </div>
+  </section>
+
+  <section class="section section--accent">
+    <div class="wrap cta" style="align-items:center">
+      <h2 class="display display--m">{t('services.ctaTitle')}</h2>
+      <a class="btn btn--dark" href={routes.contact[lang]} data-reveal>{t('services.ctaButton')}</a>
+    </div>
+  </section>
+</Base>

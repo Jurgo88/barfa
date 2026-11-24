@@ -1,0 +1,72 @@
+---
+import { Image, getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import type { Project } from '../data/projects';
+import { routes, projectPath, useT, type Lang } from '../i18n/ui';
+interface Props { lang: Lang; project: Project; next: Project }
+const { lang, project, next } = Astro.props;
+const t = useT(lang);
+const cover = project.cover;
+const rest = project.gallery.filter((g) => g !== cover);
+const big = async (src: ImageMetadata) => (await getImage({ src, width: Math.min(2000, src.width), format: 'webp' })).src;
+const coverBig = await big(cover);
+const restBig = await Promise.all(rest.map(big));
+const forWhom = lang === 'sk' ? 'pre' : 'for';
+---
+<Base lang={lang} title={project.short} description={`${project.service} ${forWhom} ${project.client}. ${project.brief.replace(/[\[\]]/g, '')}`.slice(0, 158)} image={project.cover}>
+  <section class="wrap" style="padding-top:56px;padding-bottom:40px;display:flex;flex-direction:column;gap:20px">
+    <a class="muted" href={routes.work[lang]}>{t('case.back')}</a>
+    <p class="eyebrow">{project.service}</p>
+    <h1 class="display display--l">{project.title}</h1>
+  </section>
+
+  <div class="wrap">
+    <a class="zoom" href={coverBig} data-lightbox aria-label={`${t('case.zoom')}: ${project.alt}`}>
+      <Image src={cover} alt={`${project.alt} – ${t('case.mainPhoto')}`} widths={[800, 1400, 2000]} sizes="(max-width: 1320px) 100vw, 1272px" loading="eager" style="width:100%;max-height:85vh;object-fit:cover;border-radius:4px" />
+    </a>
+  </div>
+
+  <dl class="wrap meta" data-reveal>
+    <div><dt>{t('case.client')}</dt><dd>{project.client}</dd></div>
+    <div><dt>{t('case.service')}</dt><dd>{project.service}</dd></div>
+    <div><dt>{t('case.role')}</dt><dd>{project.role}</dd></div>
+    <div><dt>{t('case.year')}</dt><dd>{project.year}</dd></div>
+  </dl>
+
+  <section class="wrap section story">
+    <div class="story__row" data-reveal><h2>{t('case.brief')}</h2><p>{project.brief}</p></div>
+    <div class="story__row" data-reveal><h2>{t('case.solution')}</h2><p>{project.solution}</p></div>
+    <div class="story__row" data-reveal><h2>{t('case.result')}</h2><p>{project.result}</p></div>
+  </section>
+
+  <section class="wrap section section--tight-top" aria-label={t('case.gallery')}>
+    <div class="gallery">
+      {rest.map((img, i) => (
+        <figure data-reveal>
+          <a class="zoom" href={restBig[i]} data-lightbox aria-label={`${t('case.zoom')} ${i + 2}`}>
+            <Image src={img} alt={`${project.alt}, ${t('case.photo')} ${i + 2}`} widths={[480, 800, 1200]} sizes="(max-width: 760px) 100vw, 33vw" />
+          </a>
+        </figure>
+      ))}
+    </div>
+  </section>
+
+  {project.quote && (
+    <section class="wrap section section--tight-top">
+      <figure data-reveal style="background:var(--surface);border-radius:4px;padding:48px;display:flex;flex-direction:column;gap:20px">
+        <blockquote style="font-size:26px;line-height:1.4">„{project.quote.text}“</blockquote>
+        <figcaption class="muted">{project.quote.author}</figcaption>
+      </figure>
+    </section>
+  )}
+
+  <section class="border-top">
+    <div class="wrap next section" style="padding-top:56px;padding-bottom:56px">
+      <a href={projectPath(lang, next.slug)} style="display:flex;flex-direction:column;gap:6px">
+        <span class="eyebrow">{t('case.next')}</span>
+        <span style="font-size:28px;font-weight:600">{next.short} →</span>
+      </a>
+      <a class="btn btn--accent" href={routes.contact[lang]}>{t('case.cta')}</a>
+    </div>
+  </section>
+</Base>

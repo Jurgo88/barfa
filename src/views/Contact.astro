@@ -1,0 +1,60 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../data/site';
+import { routes, useT, type Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+const types = lang === 'sk' ? ['Fotografia', 'Video & Reels', 'Grafický dizajn', t('form.other')] : ['Photography', 'Video & Reels', 'Graphic design', t('form.other')];
+const budgets = lang === 'sk' ? ['do 500 €', '500 – 1 500 €', 'viac ako 1 500 €'] : ['up to €500', '€500 – 1,500', 'over €1,500'];
+---
+<Base lang={lang} title={t('contact.title')} description={t('contact.description')}>
+  <section class="wrap section contact">
+    <div class="contact__info">
+      <h1 class="display display--l"><Fragment set:html={t('contact.h1')} /><span class="dot">.</span></h1>
+      <p class="lead">{t('contact.lead')}</p>
+      <div class="contact__list" data-reveal>
+        <div><p class="eyebrow">{t('contact.email')}</p><a href={`mailto:${site.email}`}>{site.email}</a></div>
+        {site.phone && <div><p class="eyebrow">{t('contact.phone')}</p><a href={`tel:${site.phone.replace(/\s/g, '')}`}>{site.phone}</a></div>}
+        <div><p class="eyebrow">{t('contact.social')}</p>
+          <div style="display:flex;flex-wrap:wrap;gap:20px;font-size:18px;font-weight:600">
+            {site.socials.instagram && <a href={site.socials.instagram} target="_blank" rel="noopener">Instagram</a>}
+            {site.socials.linkedin && <a href={site.socials.linkedin} target="_blank" rel="noopener">LinkedIn</a>}
+            {site.socials.youtube && <a href={site.socials.youtube} target="_blank" rel="noopener">YouTube</a>}
+          </div>
+        </div>
+        <div><p class="eyebrow">{t('contact.where')}</p><span style="font-size:18px">{lang === 'sk' ? site.location : 'Slovakia'}, {t('contact.whereText')}</span></div>
+      </div>
+    </div>
+
+    <form class="form" name="dopyt" method="POST" action={routes.thanks[lang]} data-netlify="true" netlify-honeypot="web" data-reveal>
+      <input type="hidden" name="form-name" value="dopyt" />
+      <input type="hidden" name="jazyk" value={lang} />
+      <p class="hp"><label>{t('form.hp')} <input name="web" tabindex="-1" autocomplete="off" /></label></p>
+      <h2 style="font-size:28px;font-weight:600">{t('form.title')}</h2>
+      <div class="form__row">
+        <label class="field">{t('form.name')}<input type="text" name="meno" autocomplete="name" required /></label>
+        <label class="field">{t('form.company')}<input type="text" name="firma" autocomplete="organization" /></label>
+      </div>
+      <label class="field">{t('form.email')}<input type="email" name="email" autocomplete="email" required /></label>
+      <fieldset>
+        <legend>{t('form.need')}</legend>
+        <div class="chips">
+          {types.map((x) => <label class="chip"><input type="checkbox" name="sluzba" value={x} /> {x}</label>)}
+        </div>
+      </fieldset>
+      <div class="form__row">
+        <label class="field">{t('form.budget')}
+          <select name="rozpocet">
+            <option>{t('form.budget0')}</option>
+            {budgets.map((b) => <option>{b}</option>)}
+          </select>
+        </label>
+        <label class="field">{t('form.date')}<input type="text" name="termin" placeholder={t('form.datePh')} /></label>
+      </div>
+      <label class="field">{t('form.message')}<textarea name="sprava" rows="5" required placeholder={t('form.messagePh')}></textarea></label>
+      <button class="btn btn--accent" type="submit" style="align-self:flex-start;min-height:56px;font-size:18px;padding:16px 32px">{t('form.submit')}</button>
+      <p class="form-note">{t('form.note')}</p>
+    </form>
+  </section>
+</Base>

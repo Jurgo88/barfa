@@ -4,5 +4,5 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://simkovabarb.com',
   trailingSlash: 'ignore',
-  integrations: [sitemap({ filter: (page) => !page.includes('/dakujem') })],
+  integrations: [sitemap({ filter: (page) => !page.includes('/dakujem') && !page.includes('/thank-you') })],
 });

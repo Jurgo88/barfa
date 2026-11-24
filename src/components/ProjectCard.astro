@@ -1,15 +1,18 @@
 ---
 import { Image } from 'astro:assets';
 import type { Project } from '../data/projects';
+import { projectPath, langFromUrl, useT } from '../i18n/ui';
 interface Props { project: Project; ratio?: string; more?: boolean; headingLevel?: 'h2' | 'h3' }
 const { project, ratio = '3 / 2', more = true, headingLevel = 'h3' } = Astro.props;
+const lang = langFromUrl(Astro.url);
+const t = useT(lang);
 const H = headingLevel;
 ---
-<a class="card" href={`/praca/${project.slug}`} data-categories={project.categories.join(' ')}>
+<a class="card" href={projectPath(lang, project.slug)} data-categories={project.categories.join(' ')} data-reveal>
   <div class="card__img">
     <Image src={project.cover} alt={`${project.alt} – ${project.short}`} widths={[480, 800, 1200]} sizes="(max-width: 760px) 100vw, 50vw" style={`aspect-ratio:${ratio}`} />
   </div>
-  <div class="tags">{project.tags.map((t) => <span class="tag">{t}</span>)}</div>
+  <div class="tags">{project.tags.map((tag) => <span class="tag">{tag}</span>)}</div>
   <H class="card__title">{project.short}</H>
-  {more && <span class="card__more">Pozrieť projekt →</span>}
+  {more && <span class="card__more">{t('card.more')}</span>}
 </a>

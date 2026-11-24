@@ -1,0 +1,85 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import Reels from '../components/Reels.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { getFeatured } from '../data/projects';
+import { clients, site } from '../data/site';
+import { routes, useT, type Lang } from '../i18n/ui';
+import hero from '../assets/foto/hero.jpg';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+const featured = getFeatured(lang);
+const services = [1, 2, 3] as const;
+const steps = [1, 2, 3, 4] as const;
+---
+<Base lang={lang}>
+  <section class="wrap hero">
+    <div class="hero__text">
+      <p class="eyebrow" data-hero>{t('home.eyebrow')}</p>
+      <h1 class="display display--xl">
+        <span class="line"><span>Visuals</span></span>
+        <span class="line"><span>with</span></span>
+        <span class="line"><span>character<span class="dot">.</span></span></span>
+      </h1>
+      <p class="lead" data-hero>{t('home.lead')}</p>
+      <div class="btn-row" data-hero>
+        <a class="btn btn--light" href={routes.work[lang]}>{t('home.ctaWork')}</a>
+        <a class="btn btn--ghost" href={routes.contact[lang]}>{t('home.ctaContact')}</a>
+      </div>
+    </div>
+    <div class="hero__media">
+      <Image src={hero} alt={t('home.heroAlt')} widths={[480, 800, 1200]} sizes="(max-width: 760px) 100vw, 40vw" loading="eager" fetchpriority="high" />
+    </div>
+  </section>
+
+  <section class="clients" aria-label={t('home.clientsLabel')}>
+    <div class="wrap clients__inner" data-reveal>
+      <span class="eyebrow">{t('home.clients')}</span>
+      {clients.map((c) => <span class="clients__name">{c}</span>)}
+    </div>
+  </section>
+
+  <section class="section wrap">
+    <div class="section-head" data-reveal>
+      <h2 class="display display--m">{t('home.featured')}</h2>
+      <a class="link-underline" href={routes.work[lang]}>{t('home.allProjects')}</a>
+    </div>
+    <div class="grid grid--2">
+      {featured.map((p) => <ProjectCard project={p} />)}
+    </div>
+  </section>
+
+  <section class="section section--light">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <h2 class="display display--m">{t('home.services')}</h2>
+        <a class="link-underline" href={routes.services[lang]}>{t('home.servicesLink')}</a>
+      </div>
+      <div class="grid grid--3">
+        {services.map((n) => (
+          <div class="service-col" data-reveal><span class="service-col__num">0{n}</span><h3>{t(`home.s${n}`)}</h3><p>{t(`home.s${n}t`)}</p></div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section wrap">
+    <h2 class="display display--m" style="margin-bottom:48px" data-reveal>{t('home.process')}</h2>
+    <ol class="steps grid grid--4">
+      {steps.map((n) => <li data-reveal><strong>{t(`home.p${n}`)}</strong><span>{t(`home.p${n}t`)}</span></li>)}
+    </ol>
+  </section>
+
+  <section class="section border-top wrap" id="reels">
+    <div class="section-head" data-reveal>
+      <h2 style="font-size:28px;font-weight:600">{t('home.reels')}</h2>
+      {site.socials.instagram && <a class="link-underline" href={site.socials.instagram} target="_blank" rel="noopener">Instagram →</a>}
+    </div>
+    <Reels limit={4} />
+  </section>
+
+  <CtaBand />
+</Base>

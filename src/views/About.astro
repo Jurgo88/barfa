@@ -1,0 +1,67 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import about from '../assets/foto/about.jpg';
+import { site } from '../data/site';
+import { routes, useT, type Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useT(lang);
+const y = t('about.year');
+const timeline = [
+  { when: `${y} – ${t('about.now')}`, title: 'Image Pro', text: t('about.e1') },
+  { when: `${y} – ${t('about.now')}`, title: 'The Youniverse', text: t('about.e2') },
+  { when: `${y} – ${y}`, title: t('about.e3title'), text: t('about.e3') },
+];
+const facts = [
+  [t('about.do'), t('about.doText')],
+  [t('about.tools'), t('about.toolsText')],
+  [t('about.langs'), t('about.langsText')],
+];
+---
+<Base lang={lang} title={t('about.title')} description={t('about.description')} image={about}>
+  <section class="wrap section" style="display:flex;flex-wrap:wrap;gap:56px;align-items:flex-start">
+    <div style="flex:1 1 360px;min-width:0" class="about-photo">
+      <Image src={about} alt={t('about.photoAlt')} widths={[480, 800, 1200]} sizes="(max-width: 760px) 100vw, 40vw" loading="eager" style="width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:4px" />
+    </div>
+    <div style="flex:999 1 540px;min-width:0;display:flex;flex-direction:column;gap:24px">
+      <p class="eyebrow">{t('about.title')}</p>
+      <h1 class="display display--l">{t('about.hello')}<span class="dot">.</span></h1>
+      <p data-reveal style="font-size:clamp(19px,2vw,22px);line-height:1.5;color:#e6e2da">{t('about.p1')}</p>
+      <p data-reveal style="color:var(--text-soft)">{t('about.p2')}</p>
+      <p data-reveal style="color:var(--text-soft)">{t('about.p3')}</p>
+      <div class="btn-row" style="margin-top:8px">
+        {site.cv && <a class="btn btn--light" href={site.cv} download>
+          <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12" /><path d="m7 10 5 5 5-5" /><path d="M5 21h14" /></svg>
+          {t('about.cv')}
+        </a>}
+        {site.socials.linkedin && <a class="btn btn--ghost" href={site.socials.linkedin} target="_blank" rel="noopener">LinkedIn</a>}
+      </div>
+    </div>
+  </section>
+
+  <section class="border-top">
+    <div class="wrap section split">
+      <h2 class="display display--s" data-reveal>{t('about.experience')}</h2>
+      <ol class="timeline">
+        {timeline.map((e) => <li data-reveal><span class="timeline__when">{e.when}</span><div class="timeline__what"><strong>{e.title}</strong><span class="muted">{e.text}</span></div></li>)}
+      </ol>
+    </div>
+  </section>
+
+  <section class="border-top">
+    <div class="wrap section grid grid--3">
+      {facts.map(([h, p]) => <div data-reveal style="display:flex;flex-direction:column;gap:16px"><h2 class="eyebrow" style="color:var(--accent)">{h}</h2><p class="muted">{p}</p></div>)}
+    </div>
+  </section>
+
+  <section class="section section--surface">
+    <div class="wrap cta" style="align-items:center">
+      <div style="display:flex;flex-direction:column;gap:8px" data-reveal>
+        <h2 style="font-size:32px;font-weight:600">{t('about.teamTitle')}</h2>
+        <p class="muted">{t('about.teamText')}</p>
+      </div>
+      <a class="btn btn--accent" href={routes.contact[lang]} data-reveal>{t('about.teamButton')}</a>
+    </div>
+  </section>
+</Base>

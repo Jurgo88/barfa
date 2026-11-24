@@ -1,13 +1,15 @@
 ---
 import { reels } from '../data/site';
+import { langFromUrl, useT } from '../i18n/ui';
+const t = useT(langFromUrl(Astro.url));
 interface Props { limit?: number }
 const { limit = 4 } = Astro.props;
 const list = reels.slice(0, limit);
 ---
 <div class="reels">
   {list.map((id, i) => (
-    <div class="reel" data-id={id}>
-      <button type="button" aria-label={`Prehrať reel ${i + 1}`}>
+    <div class="reel" data-id={id} data-reveal>
+      <button type="button" aria-label={`${t('reel.play')} ${i + 1}`}>
         <img src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`} alt="" loading="lazy" decoding="async" />
         <span class="reel__play" aria-hidden="true">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
