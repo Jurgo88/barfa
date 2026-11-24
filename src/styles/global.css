@@ -123,6 +123,7 @@ h1, h2, h3, p, figure, blockquote, ul, ol { margin: 0; }
 .clients__name { font-size: 20px; font-weight: 600; color: var(--text-soft); }
 
 /* Cards */
+[hidden] { display: none !important; }
 .card { display: flex; flex-direction: column; gap: 14px; }
 .card:hover { color: var(--text); }
 .card__img { overflow: hidden; border-radius: var(--radius); background: var(--photo); }

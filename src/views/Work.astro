@@ -29,6 +29,7 @@ const projects = getProjects(lang);
 </Base>
 <script>
   import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
   const buttons = document.querySelectorAll<HTMLButtonElement>('.filter');
   const cards = document.querySelectorAll<HTMLElement>('#projekty .card');
   const empty = document.getElementById('ziadne');
@@ -47,6 +48,8 @@ const projects = getProjects(lang);
       if (!still && shown.length) {
         gsap.fromTo(shown, { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.5, stagger: 0.06, ease: 'power3.out', overwrite: true });
       }
+      // Karty sa presunuli, animácie pri scrollovaní musia prepočítať pozície
+      ScrollTrigger.refresh();
     }),
   );
 </script>
